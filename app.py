@@ -7,7 +7,7 @@ from config import Config
 from mongo import client
 
 
-config = Config().turtlemint
+config = Config().file_db
 db_obj = client(config['username'], config['password'], config['database'], host=config['host'])
 file_db = db_obj[config['database']]
 app = Flask(__name__)
