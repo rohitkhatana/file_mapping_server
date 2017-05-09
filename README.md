@@ -1,6 +1,6 @@
 # file_mapping_server
 ## steps to run the server
-#### 1. cp config_sample.py congfig.py
+#### 1. cp config_sample.py config.py
 #### 2. change the mongo credentials
 #### 3. virtualenv venv
 #### 4. source venv/bin/activate
