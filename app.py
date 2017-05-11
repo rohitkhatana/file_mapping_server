@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 import requests
+import datetime
 
 from config import Config
 from mongo import client
@@ -20,7 +21,9 @@ def create_file_mapping(url, bucket_name):
         'key': url.split('https://docs.turtlemint.com/')[1],
         'bucketName': bucket_name,
         'host': 'localhost',
-        'mimeType': content_type
+        'mimeType': content_type,
+        'createdAt': datetime.datetime.now(),
+        'updatedAt': datetime.datetime.now()
     }
 
 def save_file_mapping(url, bucket_name):
