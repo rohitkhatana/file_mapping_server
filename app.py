@@ -14,20 +14,20 @@ file_db = db_obj[config['database']]
 app = Flask(__name__)
 
 
-def create_file_mapping(url, bucket_name):
+def create_file_mapping(url, bucket_name, caller):
     req = requests.get(url)
     content_type = req.headers['Content-Type']
     return  {
         'key': url.split('https://docs.turtlemint.com/')[1],
         'bucketName': bucket_name,
-        'host': 'localhost',
+        'host': caller,
         'mimeType': content_type,
         'createdAt': datetime.datetime.now(),
         'updatedAt': datetime.datetime.now()
     }
 
-def save_file_mapping(url, bucket_name):
-    file_mapping = create_file_mapping(url, bucket_name)
+def save_file_mapping(url, bucket_name, caller):
+    file_mapping = create_file_mapping(url, bucket_name, caller)
     db_file_result = file_db['fileMapping'].insert_one(file_mapping)
     file_mapping['id'] = str(db_file_result.inserted_id)
     print file_mapping.pop('_id')
@@ -37,10 +37,10 @@ def save_file_mapping(url, bucket_name):
 @app.route("/file", methods=["POST"])
 def file_mapping():
     form = request.form
-    if not form.has_key('url'):
-        return jsonify({'meta': {'msg': 'url is required key'}}), 400
+    if not form.has_key('url') or not request.headers.get('Caller'):
+        return jsonify({'meta': {'msg': 'url and Caller-header is required key'}}), 400
     bucket_name = "docs.turtlemint.com" if not form.has_key('bucketName') else form.get('bucketName')
-    return jsonify(save_file_mapping(form.get('url'), bucket_name))
+    return jsonify(save_file_mapping(form.get('url'), bucket_name, request.headers['Caller']))
 
 if __name__ == "__main__":
     app.run()
